@@ -1,0 +1,518 @@
+import sys
+import subprocess
+from gettext import install
+import os
+import time
+import random
+
+
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pygame'])
+
+
+import pygame
+
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (800,40)
+white = (255,255,255)
+
+pygame.init()
+pygame.display.set_caption('T-REX')
+pygame.font.init() 
+size = (1500,800)
+screen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
+pygame.font.init()
+
+backgroundcolor = white
+starttime = time.time()
+timeelapsed = 0  
+timer = time.time()
+timer = 0
+timm = time.time()
+gameclock = 0
+scoretimm = time.time()
+scoretime = 0
+casetime = 0
+casetimm = time.time()
+discotime = 0
+discotimm = time.time()
+count = 0
+legs = 0
+x = 100
+y = 600
+cx = 1570
+cy = 590
+bounce = 0
+top = 0
+diffrence = 0
+grey = (160,160,160)
+darkGrey = (120,120,120)
+jumpSpeed = 13
+cactusSpeed = 13
+gamestarted = False
+gameover = 0
+cx2 = cx + diffrence
+cy2 = 590
+gx = 0
+gy = 720
+groundSpeed = cactusSpeed
+groundlevel = 600
+jumpheight = 400
+colorflashlvl = False
+dinocolor = grey
+pillTaken = 0
+startlvl2 = 0
+px = 1200
+py = 400
+score = 0
+case = 0
+level = 1
+pillZone = 50
+startlvl3 = 0
+
+
+def createDino(x, y):
+    pygame.draw.rect(screen, dinocolor, (x,y,54,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+6,12,6))
+    pygame.draw.rect(screen, dinocolor, (x+12,y+6,48,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+12,66,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+18,66,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+24,66,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+30,36,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+36,54,6))
+    pygame.draw.rect(screen, dinocolor, (x-12,y+42,30,6))
+    pygame.draw.rect(screen, dinocolor, (x-18,y+48,36,6))
+    pygame.draw.rect(screen, dinocolor, (x-24,y+54,54,6))
+    pygame.draw.rect(screen, dinocolor, (x+24,y+60,6,6))
+    pygame.draw.rect(screen, dinocolor, (x-30,y+60,48,6))
+    pygame.draw.rect(screen, dinocolor, (x-60,y+42,6,12))
+    pygame.draw.rect(screen, dinocolor, (x-60,y+54,12,6))
+    pygame.draw.rect(screen, dinocolor, (x-60,y+60,18,6))
+    pygame.draw.rect(screen, dinocolor, (x-60,y+66,78,6))
+    pygame.draw.rect(screen, dinocolor, (x-60,y+72,78,6))
+    pygame.draw.rect(screen, dinocolor, (x-54,y+78,72,6))
+    pygame.draw.rect(screen, dinocolor, (x-48,y+84,60,6))
+    pygame.draw.rect(screen, dinocolor, (x-42,y+90,48,6))
+
+def createLeg1(x, y):
+    pygame.draw.rect(screen, dinocolor, (x-36,y+96,36,6))
+    pygame.draw.rect(screen, dinocolor, (x-30,y+102,18,6))
+    pygame.draw.rect(screen, dinocolor, (x-30,y+108,12,6))
+    pygame.draw.rect(screen, dinocolor, (x-30,y+114,6,6))
+    pygame.draw.rect(screen, dinocolor, (x-30,y+120,12,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+102,18,6))
+
+def createLeg2(x, y):
+    pygame.draw.rect(screen, dinocolor, (x-42,y+90,48,6))
+    pygame.draw.rect(screen, dinocolor, (x-36,y+96,12,6))
+    pygame.draw.rect(screen, dinocolor, (x-12,y+96,12,6))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+102,6,18))
+    pygame.draw.rect(screen, dinocolor, (x-6,y+114,12,6))
+    pygame.draw.rect(screen, dinocolor, (x-30,y+102,12,6))
+
+def createGround():
+    pygame.draw.rect(screen, grey, (0,720,1500,4))
+
+def createCactus(x,y):
+    pygame.draw.rect(screen, grey, (x,y,24,6))
+    pygame.draw.rect(screen, grey, (x-6,y+6,36,144))
+    pygame.draw.rect(screen, grey, (x-18,y+144,18,6))
+    pygame.draw.rect(screen, grey, (x-30,y+144,6,6))
+    pygame.draw.rect(screen, grey, (x-64,y+144,18,6))
+    pygame.draw.rect(screen, grey, (x+48,y+138,6,6))
+    pygame.draw.rect(screen, grey, (x+30,y+156,6,6))
+    pygame.draw.rect(screen, grey, (x,y+156,12,6))
+    pygame.draw.rect(screen, grey, (x-24,y+100,18,18))
+    pygame.draw.rect(screen, grey, (x+30,y+100,18,18))
+    pygame.draw.rect(screen, grey, (x+48,y+40,18,60))
+    pygame.draw.rect(screen, grey, (x+48,y+100,12,6))
+    pygame.draw.rect(screen, grey, (x+48,y+106,6,6))
+    pygame.draw.rect(screen, grey, (x+52,y+36,10,6))
+    pygame.draw.rect(screen, grey, (x-42,y+50,18,50))
+    pygame.draw.rect(screen, grey, (x-36,y+100,18,6))
+    pygame.draw.rect(screen, grey, (x-30,y+106,18,6))
+    pygame.draw.rect(screen, grey, (x-38,y+46,10,6))
+
+def createCactus2(x,y):
+    pygame.draw.rect(screen, grey, (x,y,24,6))
+    pygame.draw.rect(screen, grey, (x-6,y+6,36,144))
+    pygame.draw.rect(screen, grey, (x-18,y+144,18,6))
+    pygame.draw.rect(screen, grey, (x-30,y+144,6,6))
+    pygame.draw.rect(screen, grey, (x-64,y+144,18,6))
+    pygame.draw.rect(screen, grey, (x+48,y+138,6,6))
+    pygame.draw.rect(screen, grey, (x+30,y+156,6,6))
+    pygame.draw.rect(screen, grey, (x,y+156,12,6))
+    pygame.draw.rect(screen, grey, (x-24,y+100,18,18))
+    pygame.draw.rect(screen, grey, (x+30,y+100,18,18))
+    pygame.draw.rect(screen, grey, (x+48,y+40,18,60))
+    pygame.draw.rect(screen, grey, (x+48,y+100,12,6))
+    pygame.draw.rect(screen, grey, (x+48,y+106,6,6))
+    pygame.draw.rect(screen, grey, (x+52,y+36,10,6))
+    pygame.draw.rect(screen, grey, (x-42,y+50,18,50))
+    pygame.draw.rect(screen, grey, (x-36,y+100,18,6))
+    pygame.draw.rect(screen, grey, (x-30,y+106,18,6))
+    pygame.draw.rect(screen, grey, (x-38,y+46,10,6))
+
+def createGroundWstairs(x,y):
+    pygame.draw.rect(screen, grey, (x,y,1000,4))
+    pygame.draw.rect(screen, grey, (x+1000,y-36,4,40))
+    pygame.draw.rect(screen, grey, (x+1000,y-40,200,4))
+    pygame.draw.rect(screen, grey, (x+1200,y-76,4,40))
+    pygame.draw.rect(screen, grey, (x+1200,y-80,200,4))
+    pygame.draw.rect(screen, grey, (x+1400,y-116,4,40))
+    pygame.draw.rect(screen, grey, (x+1400,y-120,200,4))
+    pygame.draw.rect(screen, grey, (x+1600,y-156,4,40))
+    pygame.draw.rect(screen, grey, (x+1600,y-160,200,4))
+    pygame.draw.rect(screen, grey, (x+1800,y-196,4,40))
+    pygame.draw.rect(screen, grey, (x+1800,y-200,200,4))
+    pygame.draw.rect(screen, grey, (x+2000,y-200,4,300))
+    pygame.draw.rect(screen, grey, (x+2650,y,1000,4))
+    pygame.draw.rect(screen, grey, (x+2650,y,4,100))
+    pygame.draw.rect(screen, grey, (x+3650,y,4,100))
+    pygame.draw.rect(screen, grey, (x+4050,y-50,200,4))
+    pygame.draw.rect(screen, grey, (x+4050,y-50,4,200))
+    pygame.draw.rect(screen, grey, (x+4250,y-50,4,200))
+    pygame.draw.rect(screen, grey, (x+4550,y-150,200,4))
+    pygame.draw.rect(screen, grey, (x+4550,y-150,4,300))
+    pygame.draw.rect(screen, grey, (x+4750,y-150,4,300))
+    pygame.draw.rect(screen, grey, (x+5000,y-300,400,4))
+    pygame.draw.rect(screen, grey, (x+5000,y-300,4,500))
+    pygame.draw.rect(screen, grey, (x+5400,y-300,4,500))
+    pygame.draw.rect(screen, grey, (x+5950,y,3000,4))
+    pygame.draw.rect(screen, grey, (x+5950,y,4,100))
+
+
+def gameOver():
+     myfont = pygame.font.SysFont('Comic Sans MS', 30)
+     text = myfont.render('GAME OVER', False, (0, 0, 0))
+     myfont1 = pygame.font.SysFont('Comic Sans MS', 20)
+     text1 = myfont1.render('PRESS ENTER TO RETRY', False, (0, 0, 0))
+     pygame.draw.rect(screen, darkGrey, (500,200,500,200))
+     screen.blit(text,(650,275))
+     screen.blit(text1,(622,315))
+    
+
+
+def startScreen():
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+    text = myfont.render('PRESS ENTER TO BEGIN', False, (0, 0, 0))
+    pygame.draw.rect(screen, darkGrey, (500,200,500,200))
+    screen.blit(text,(560,275))
+
+def scorecount():
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+    text1 = myfont.render(str(score), True, (darkGrey))
+    text2 = myfont.render("SCORE:", False, (darkGrey))
+    text3 = myfont.render("LEVEL:", False, (darkGrey))
+    text4 = myfont.render(str(level), True, (darkGrey))
+    screen.blit(text1,(1400,30))
+    screen.blit(text2,(1250,30))
+    screen.blit(text3,(50,30))
+    screen.blit(text4,(200,30))
+
+def lvlPill(x,y):
+    pygame.draw.rect(screen, pillColor, (x,y,16,4))
+    pygame.draw.rect(screen, pillColor, (x-4,y+4,24,4))
+    pygame.draw.rect(screen, pillColor, (x-8,y+8,32,24))
+    pygame.draw.rect(screen, pillColor, (x-8,y+32,4,24))
+    pygame.draw.rect(screen, pillColor, (x+20,y+32,4,24))
+    pygame.draw.rect(screen, pillColor, (x-4,y+52,4,8))
+    pygame.draw.rect(screen, pillColor, (x+16,y+52,4,8))
+    pygame.draw.rect(screen, pillColor, (x,y+56,4,8))
+    pygame.draw.rect(screen, pillColor, (x+12,y+56,4,8))
+    pygame.draw.rect(screen, pillColor, (x,y+60,16,4))
+    
+
+done = False
+while not done:
+    clock.tick(60)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key==pygame.K_ESCAPE:
+                done = True
+
+    screen.fill(backgroundcolor)
+    pillColor = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+    if gamestarted == False:
+     createLeg1(x, y)
+     startScreen()
+     if event.type == pygame.KEYDOWN:
+         if event.key == pygame.K_RETURN:
+             if gamestarted == False:
+                 cactusSpeed = 13
+                 jumpSpeed = 13
+                 score = 0
+                 level = 1
+                 cx = 1570
+                 cx2 = 1570
+                 cy = 590
+                 cy2 = 590
+                 y = 600
+                 gx = 0
+                 pillTaken = 0
+                 startlvl2 = 0
+                 gamestarted = True
+                          
+    timeelapsed = time.time() - starttime
+    timerelapsed = time.time() - timer
+    gameclock = time.time() - timm
+    scoretime = time.time() - scoretimm
+    casetime = time.time() -casetimm
+    discotime = time.time() - discotimm
+    createDino(x,y)
+    scorecount()
+
+    if level == 1 or level == 3:
+     createCactus(cx, cy)
+     createCactus2(cx2, cy2)
+     createGround()
+
+    if gamestarted == True:
+
+     if case == 1:
+         diffrence = +100
+     if case == 2:
+         diffrence = +800
+     if case == 3:
+         diffrence = +1000
+
+     cx -= cactusSpeed  
+     if cx < -60:
+         cx = 1570
+         
+     cx2 -= cactusSpeed
+     if cx2 < -60:
+         cx2 = cx + diffrence
+         case = random.randint(1, 3)
+
+     if timeelapsed > 0.15:
+        count += 1
+        starttime = time.time()
+     if count == 2:
+        count = 0
+     if count == 0:
+        createLeg1(x, y)
+     if count == 1:
+        createLeg2(x, y)
+    
+
+     keys = pygame.key.get_pressed()
+     if keys[pygame.K_SPACE] and timerelapsed > 0.2:
+         bounce = 1
+         timer = time.time()
+    
+     #if event.type == pygame.KEYDOWN and timerelapsed > 0.2:
+         #if event.key == pygame.K_SPACE:
+            #bounce = 1
+             #timer = time.time()
+
+     if bounce == 1 and (level == 1 or level == 3):
+        if top == 0:
+          y -= jumpSpeed
+        if y < 350:
+            top = 1
+        if top == 1:
+            y += jumpSpeed - 3
+        if y >= 600 and top == 1:
+            y = 600
+            bounce = 0
+            top = 0
+        
+    if (cx < x + 30 and cx > x-30 and cy < y+114 )or (cx2 < x + 30 and cx2 > x-30 and cy2 < y+114) and level == 1:
+     gamestarted = False
+     gameOver()
+         
+    if scoretime > 0.2 and gamestarted == True:
+     score += 1
+     scoretimm = time.time()
+
+    if gameclock > 5:
+     jumpSpeed += 1
+     cactusSpeed += 1
+     timm = time.time()
+
+    if score > pillZone and pillTaken == 0:
+     lvlPill(px,py)
+     px -= 10
+     if px < -40:
+         px = 1550
+
+    if score > pillZone and y <= py+60 and y+40 >= py+4 and x+30 >= px-8 and x-10 <= px+24:
+        pillTaken = 1
+
+    if pillTaken == 1:
+        if startlvl2 < 101:
+            cy += 5
+            cy2 += 5
+            startlvl2 += 1
+            if startlvl2 < 99:
+             dinocolor = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+            if startlvl2 > 100:
+             dinocolor = grey
+
+    if startlvl2 > 95 and startlvl2 < 100:
+     level = 2
+     discotimm = time.time()
+     top = 0
+     bounce = 0
+     y = 600
+     colorflashlvl = True
+     
+    if level == 2:
+     createGroundWstairs(gx,gy)
+     
+
+    if gamestarted == True:
+     if level == 2:
+        cx = 0
+        cx2 = 0
+        jumpSpeed = 13
+        gx -= groundSpeed
+
+        if gx < -880 and gx > -1080:
+            if gx <= -880 and bounce != 1:
+             y = 560
+            groundlevel = 560
+            jumpheight = 360
+
+        if gx < -1080 and gx > -1280:
+            if gx <= -1080 and bounce != 1:
+             y = 520
+            groundlevel = 520
+            jumpheight = 320
+
+        if gx < -1280 and gx > -1480:
+            if gx <= -1280 and bounce != 1:
+             y = 480
+            groundlevel = 480
+            jumpheight = 280
+
+        if gx < -1480 and gx > -1680:
+            if gx <= -1480 and bounce != 1:
+             y = 440
+            groundlevel = 440
+            jumpheight = 240
+
+        if gx < -1680 and gx > -1880:
+            if gx <= -1680 and bounce != 1:
+             y = 400
+            groundlevel = 400
+            jumpheight = 200
+
+        if gx <= -1900 and gx > -3980 :
+         groundlevel = 600
+
+        if gx < -1950 and bounce != 1:
+         groundlevel = 600
+         top = 1
+         bounce = 1
+
+        if  gx < 1950  and groundlevel == 600 and y == 600:
+         jumpheight = 400
+
+        if gx < -3960 and gx > -4180:
+         y = 550
+         groundlevel = 550
+         jumpheight = 350
+
+        if gx < -4500 and gx > -4680:
+         y = 450
+         groundlevel = 450
+         jumpheight = 250
+
+        if gx < -4950 and gx > -5340:
+         y = 300
+         groundlevel = 300
+         jumpheight = 150
+
+        if gx < -5950:
+         groundlevel = 600
+         jumpheight = 400
+
+    if bounce == 1 and level == 2:
+     if top == 0:
+         y -= jumpSpeed
+     if y < jumpheight:
+         top = 1
+     if top == 1:
+         y += jumpSpeed
+     if y >= groundlevel and top == 1:
+         y = groundlevel
+         bounce = 0
+         top = 0
+
+    if gx < -5340 and gx > -5900:
+        if y >= 600 and gx > -5900:
+         groundlevel = 900
+         top = 1
+         bounce = 1
+         gamestarted = False
+         gameOver()
+
+    if gx < -4700 and gx > -4950:
+        if gx < -4850 and gx > -4950 and y >= 400:
+             groundlevel = 900
+             top = 1
+             bounce = 1
+             gamestarted = False
+             gameOver()
+
+    if gx < -4200 and gx > -4500:
+        if y >= 550:
+             groundlevel = 900
+             top = 1
+             bounce = 1
+             gamestarted = False
+             gameOver()
+
+    if gx < -3600 and gx > -3960:
+        if y >= 600:
+             groundlevel = 900
+             top = 1
+             bounce = 1
+             gamestarted = False
+             gameOver()
+     
+        
+    if (y >= 600 and gx < -1965 and gx > -2530 and level == 2):
+     groundlevel = 900
+     top = 1
+     bounce = 1 
+     gamestarted = False
+     gameOver()
+
+    if colorflashlvl == True:
+     if discotime < 0.1:
+         backgroundcolor = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+     if discotime > 0.1:
+         backgroundcolor = white
+         colorflashlvl = False
+
+    if score > 120 and score < 123:
+        startlvl3 = 1
+        gamestarted = True
+
+    if startlvl3 == 1:
+         level = 1
+         discotimm = time.time()
+         top = 0
+         bounce = 0
+         y = 600
+         colorflashlvl = True
+         startlvl3 = False
+
+
+    if level == 3:
+     cx = 1070
+     cx2 = 1070
+     cy = 590
+     cy2 = 590
+     createGround()
+     createCactus(cx, cy)
+     createCactus2(cx2, cy2)
+     
+
+    pygame.display.flip()
+
+pygame.quit()

@@ -1,0 +1,444 @@
+import sys
+import subprocess
+from gettext import install
+import os
+import time
+
+
+
+
+run = False
+
+done = False
+
+
+
+reqs = subprocess.check_output([sys.executable, '-m', 'pip',
+'freeze'])
+installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
+
+print(installed_packages)
+
+if "pygame" in installed_packages and "cryptography" in installed_packages:
+    run = True
+
+
+
+
+if run == False:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
+    'pygame'])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
+    'cryptography'])
+    run = True
+
+    
+
+
+
+import pygame
+from cryptography.fernet import Fernet
+
+
+
+
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (100,20)
+white = (255,255,255)
+black = (0,0,0)
+bg = (170,170,170)
+grey = (80,80,80)
+shCol = (200,200,200)
+pygame.init()
+pygame.display.set_caption('Chatbot')
+pygame.font.init() 
+size = (1100,600)
+screen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
+pygame.font.init()
+smallfont = pygame.font.SysFont('Comic Sans MS', 25)
+smallfont1 = pygame.font.SysFont('Comic Sans MS', 25)
+font2 = pygame.font.SysFont('Comic Sans MS', 25)
+user_text = ""
+pressed = 0
+time_elapsed = 0
+timer = time.time()
+loading_text = smallfont.render('.', False, white)
+intro_text = smallfont1.render('Type Here', False, white)
+cursor_text = smallfont1.render('|', False, black)
+left = smallfont1.render('<<<', False, white)
+right = smallfont1.render('>>>', False, white)
+next = smallfont1.render('Continue...', False, white)
+dot = 1
+cursor_timer = time.time()
+cursor_timeelap = 0
+cursorblit = 0
+cursorx = 100
+
+font = pygame.font.SysFont('lucidaconsole', 20)
+nextline = True
+sentence = ""
+text = ""
+start = 0
+
+
+
+putin = user_text
+new_putin = ""
+
+
+encryptedtxt = b'gAAAAABisYI46VhlkBJkLauI-3JfLdX5DtmXBmZGBBQJI5nGc3ZQp5Pyxn4xlXqruDpbp1gVCV_MrAPJBR_kEFPjUMq7MW2w68QLVGKZn6Vqzh8qH1VT2IyzcyKdRTIRVNSqshEG1DTvb8rhpCwr2aYeJKgEfCH7vg_TRkTZ2QLJybF5Qe63a0QQIYw_Df2Ea5v9vAW2EATYxcWnDujCaL8989QINO0VRCPX_vkkoVE2QG_TG0CeFxRXcsu4Ff_o3woO3Fu7LGcvtP1keDHD3ZgwOFHFRFFp375yNF1Sg9QpLgbm_QGe19tv6QLntLEH9VCUpkxNxG6QUInx5zSFaWefIFhcK3L9Sv8ThHcbsdSBZpQJheskEcsVZm5NHIYcUAhec7gs7HpzYTsEmTDbXed9NaNoV9lWm9_8pH2lFxdG75Ijg2UfyBxkEds-C3LDDtKC3ZsbuMt_kpK6hQbN6zQ9ernkXZwpl5iFwBBz_PRuHrcmDL_SqfPypchY7cEqywsjHY74rv9Px6dFsLUQDRUmh64skAUXLfYd4QipU_gIMzpUJ_TI6a8kblnW1ITJyn6enNZNVAl1sJYHfHTkEXJapscws4PxOe8FSNf55DNKBIRqAYVRbj7YQ9MoETvWZ1fEt9MvqqR94TCterHAC_XxTTwsbt7-BE1Iu7XH7tkPI913RU2MF0x84pthewD1iieD8pw5qzjt7akj_Zq_LxeLoWKlm_IHxPME6BBub9ghUAiau2ON5NZMCqVNkfzlooB68qZhlxw_LP6-MW_Pg1xT5LyIsCQYdQC_HqRt7wDir5XN9vbDjN3SfrpUoIiKmo6kdspOUOhmGM86pv6qUygVfFE5G3-Av6N7F4yX4IQQKoB_hLMaL_8GshkruIlZPmizr9XE0_LtxtDHDdhGTIGoaeY0KS3snGV8r4M59-1KTpRhDqa2zy9ApeGdF1BrlXhAaloSjtICxSSXTiUcr1svKcsuDRiYHYULaBp8hwF8omRVsuEbi8j6FO_rCEVuOR4fGHHNeXW5R_Un3vbGutcmSIe8PhZk5Bk93yY3BtU4oJbCHm0A75D-zv_TiebV8SvNkVK3tRFA_eo9ymexRcuRy9eKwU7_NBtaYAAvcKGwa-Nv4OfJxX5EEKE6mHSDxzSGZZ-754Y23q0g8vgtxxW7WJ6GbRUxVlBmTdXW8oYHUfp_MeeGGTH9BjL47PHyPgkSr3HyE7PGsH0sux3TLN3ueZyDFI0YQGm_wyLi1sAjOJqpSg-0MMwVcdSJhCcHkRwi5yoDCgDLTY-VYiWBDJDY3SB45ptaDlynNgLZGv_r0bsBA2J6c4Vn3IANu2blomD89S1bjydqG6vr8G0HsJurYM3071VwgtqC39k2Zg-bdYjwZcTfT6WTK27Osm2AE3SsI1Y3LeCW_cz0Oz5MLdL_gk89UyF3p2MrvT-9uA98Drb6Y9njGyU8obEZtTAzdYv6ue-5bqeg49rFFo3n25jlmreYRRfMKcvmOjuQlEx8L9Zc7tBHskzawkMPX2q4QtGpgIys4DRxF6PlqFxY05UbA__4Jkd_xnS7ztCeg7jT9GZ1b8g8xo-dfPYb-TjJ6GK4JyrYEmB0IMbKx7tReUA-qCtVIBqa_Owj1GzmRkzrgKMjf3OnZpIbbO7VoE43DpBe9d_wYl0Yy1MsOXnSkaktnTtZK6ICXOvnlsLzWQ3SJn_Xbiq_G_ds5D_Zx4ehqrDIgIvGdylqEhRkjcLpRemIiwhqzH6O5XPIjbwMaPQ5ex4nQLByPE744hF7AJHvN2WGnOOKEZJqYdkbHdefvtKJVE9WCzP_4O0TgJeZNRmeLASoMOJURkn02gXaOypweYkba_KypTnN7kHxIXVLUqdt8lDXRWvimwH4aCZlEVnDzgvBHnmc8l4cc_ZEfmGD8h686DADu2Gsve56iClwwA-ELVHkdYNKrZtmOArAbdsEKLpRXEhWYaD6bhQhOjFuUUD9jL_k97G1NW26jVwB87mSFuhZ8knwD2Wsu7pisp7GeL2T6UQr8aOxrXiEjEMOCtnlhjC6uFsNM5Ez8roGHfemPcy8CEgmDEyWO7w3wx5l2nN7BiRwGOY70IPWdLCZeYgFBLfarZxkS_MwRhbmW0wpAh8whKFlB93tl4BuRXudJJGofTRIz5u09-2hcl1UhaIEb9t8FMBBK-Dtqrq6oxz3RaW8gjiIYH9idYOeeHN7ULREGKUDWuI89haWek5XsnLKyKsGoOjEgAEGTqFzje61hMrNKeJzA70J3ciRI3Qwog3lg3ehacwEhc_mZnM_9HUxpiZP3WYXLUA1yIASnE43r4nCYmXlPXVl9w23LRondn8sCQRYOE-yhetc95aXAcAJ_NgzXQMCgZZOpzSpgJ42TKhh-5PRObPMEZHBZ8ONYmrTT85pWT_UlBMlK2Cl1E2r6dq8qa_DzqkL9lhf1SNbw7n6uh84YIkmAcJKrIauAnLiDKjxrvZSC6LCbZ4juQi7-3LgYxByoTMhNxnFFTsihLb6M6yski0KhATfBAO1-99LtBQO9XVzNGHY2aroLhic9nxElRz3_f1P1ezv6np3Fx5w8rpd6C1Q6lrvmdZmTPChCDXodc0-PfELYEvsgCuNaZ6yDpCMfqmE712QVfHRIxwH8ygLFX5lytdSSagvFQwWpGP1y4BMnZUrzqU_wkOWNRGWZU2NKZC8XFvxqp1II9B_vM7rRZeSNhoDAkUO8QyTSdDbsjGIVf83tAGIE4rPq56XYV6XZ1ja8a_nT5-akDne4_YecTPhBJXLZoxvtjdWqhaofY0lof0VOOU49f8hky7YFAgsxzSpwi4fFXhwkMGqnF_uV-oSy1uBuBbPFYtLubG9aw4a6448xn0EiPBsN0vrfJg9ldai88sJjzjKARFXGRNbtzcmC9bvh9PzQ1hc2CngWGgHbbvDm9GWl1xcEkFvqqbN3w5x3Rm4y8TeL3oH_1sT5KaygLJ4Ij9svnBEw8FS5nTHyxjNzpcDD9rDBhxCTidLxwSX2ugq0cVpAtPEf6FHclSlLm-ly_UwZwJlDNOqVZhbtDU31Es2_-Ut5e1mB78zC2gD1O92m1_9qHQF-BTjpbboAtsvu55uR7ZEKumM0N1sHpZJWj-fSGGj9lYHUPv6wx2uZIrTb5w60tajU9SqiatEm8YyoVFMfjCg1gqxWWUllPApi2NcgZ_7UVR6PAxNd5wPqM1PzkMlD8cXIzFkht35GH8_fHo8xlxmi8ALKOUnIxYXQX4hbvZE3iwO2MI9'
+key = b'1nyKdRLAtdyICRYGuQ__5gpANIFG2i4nRYyOxIqc6w8='
+
+cipher_suite = Fernet(key)
+decoded_text = cipher_suite.decrypt(encryptedtxt)
+newline = 1
+
+txtY = 100
+txtlenght = 10
+tx = 100
+paused = 0
+timer1 = time.time()
+timer2 = time.time()
+timer3 = time.time()
+timer4 = time.time()
+time_elapsed1 = 0
+time_elapsed1 = 2
+time_elapsed3 = 0
+time_elapsed4 = 0
+breakline = 0
+pause = 0
+word = ""
+inc = 0
+waitbc = False
+m = 1
+n = 1
+pressed2 = 0
+pressed3 = 0
+question = 0
+z = 0
+greeted = 0
+q = 0
+qinc = 0
+letter = 0
+r = 0
+stoptext = False
+page = 0
+
+
+def printText(x,y):
+    global txtY 
+    global textX
+    global pause
+    global paused
+    global word
+    global breakline
+    global tx
+    global start
+
+    text = font.render(string_list[x] + " ", True, (255,255,255))
+    textX = text.get_width()
+
+    
+    if "!" in string_list[x] and paused == 0:
+        pause = 1  
+    if "," in string_list[x] and paused == 0:
+        pause = 2
+    if "." in string_list[x] and paused == 0:
+        pause = 3
+    if "?" in string_list[x] and paused == 0:
+        pause = 4
+    if txtY >= 400 and ("." in string_list[x] or "?" in string_list[x] or "!" in string_list[x]):
+        breakline = 1
+    
+    if start == 1:
+        screen.blit(text, (y,txtY))
+
+
+
+stringGreet = ["Hallo", "Hello", "Hei", "Hi", "God dag", "Good day", "Hello world!"]
+
+
+def greetings(x):
+    greettext = font2.render(stringGreet[x], True, (255,255,255))
+    screen.blit(greettext,(120,500))
+
+
+stringquestion = ["Where do you work?", "What do you work with?", "How long have you worked with python?",  "What is your contact info?"]
+
+
+def blitquestion(x):
+    questiontext = font2.render(stringquestion[x], True, (255,255,255))
+    screen.blit(questiontext,(120,500))
+
+
+
+
+
+
+screen.fill((60,25,60))
+
+while not done and run == True:
+    clock.tick(60)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key==pygame.K_ESCAPE:
+                done = True
+                run = False
+        if event.type == pygame.KEYDOWN and pressed == 1:
+            if event.key == pygame.K_BACKSPACE:
+                user_text = user_text[:-1]
+            elif event.key != pygame.K_RETURN and textc < 780:
+                user_text += event.unicode
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                question = 1
+
+
+    mouse = pygame.mouse.get_pos()
+
+    
+    time_elapsed = time.time() - timer
+    cursor_timeelap = time.time() - cursor_timer
+
+    if pressed != 1:
+        if 100 <= mouse[0] and mouse[0] <= 950 and 500 <= mouse[1] and mouse[1] <= 540 and greeted == 0:
+          pygame.draw.rect(screen, shCol, pygame.Rect(100, 500, 850, 40), 0 , 2)
+          if event.type == pygame.MOUSEBUTTONDOWN:
+              pressed = 1
+              
+
+        else:
+          pygame.draw.rect(screen, grey, pygame.Rect(100, 500, 850, 40), 0 , 2)
+    else:
+        dot = 0
+        pygame.draw.rect(screen, shCol, pygame.Rect(100, 500, 850, 40), 0 , 2)
+        
+
+    if event.type == pygame.MOUSEBUTTONDOWN and (100 <= mouse[0] and mouse[0] <= 850 and 500 <= mouse[1] and mouse[1] <= 540) != True:
+        pressed = 0
+  
+
+
+
+    if pressed3 != 1:
+        if 970 <= mouse[0] and mouse[0] <= 1020 and 505 <= mouse[1] and mouse[1] <= 535:
+              pygame.draw.rect(screen, shCol, pygame.Rect(970, 505, 50, 30), 0 , 2)
+              if event.type == pygame.MOUSEBUTTONDOWN:
+                  pressed3 = 1
+
+        else:
+          pygame.draw.rect(screen, grey, pygame.Rect(970, 505, 50, 30), 0 , 2)
+    else:
+        pygame.draw.rect(screen, shCol, pygame.Rect(970, 505, 50, 30), 0 , 2)
+
+    if event.type == pygame.MOUSEBUTTONDOWN and (970 <= mouse[0] and mouse[0] <= 1020 and 505 <= mouse[1] and mouse[1] <= 535) != True:
+        pressed3 = 0
+        
+
+    output = smallfont1.render(user_text, False, black)
+    screen.blit(output, (110,500))
+    screen.blit(right, (975,500))
+
+    
+    if greeted == 0:
+        if dot == 1:
+            screen.blit(loading_text,(525,505))
+        if dot == 2:
+            screen.blit(loading_text,(525,505))
+            screen.blit(loading_text,(535,505))
+        if dot == 3:
+            screen.blit(loading_text,(525,505))
+            screen.blit(loading_text,(535,505))
+            screen.blit(loading_text,(545,505))
+        if dot >= 4:
+            dot = 1
+        if dot != 0:
+            screen.blit(intro_text,(400,500))
+
+    
+    textc = output.get_width()
+
+
+    if pressed == 1:
+        if cursor_timeelap > 1:
+            cursorblit += 1
+            cursor_timer = time.time()
+        if cursorblit == 1:
+            screen.blit(cursor_text,(textc+110,500))
+        else:
+            cursorblit = 0
+        if user_text == "" and letter == 0 :
+            greetings(z)
+        
+        
+
+    if question == 1:
+        if "Hei" in user_text or "Hi" in user_text or "Hallo" in user_text or "Hello" in user_text or "God dag" in user_text or "Good day" in user_text or "Hello world!" in user_text or "hei" in user_text or "hi" in user_text or "hallo" in user_text or "hello" in user_text or "god dag" in user_text or "good day" in user_text or "hello world!" in user_text or "God Dag" in user_text or "Good Day" in user_text or "Hello World!" in user_text:
+            start = 1
+            question = 0
+            user_text = ""
+            pressed = 0
+            greeted = 1
+
+    
+    if inc > 347:
+        greeted = 0
+        letter = 1
+        if question != 1 and user_text == "" and pressed == 1:
+            blitquestion(r)
+    
+
+    time_elapsed2 = time.time() - timer2
+    time_elapsed1 = time.time() - timer1
+    time_elapsed3 = time.time() - timer3
+    time_elapsed4 = time.time() - timer4
+
+    if time_elapsed3 > 2:
+        dot += 1
+        z += 1
+        r += 1
+        timer3 = time.time()
+    if z == 7:
+        z = 0
+    if r == 4:
+        r = 0
+
+    
+
+    output = decoded_text.decode()
+    
+    string_list = output.split(" ")
+    
+    if time_elapsed1 > 0.16 and pause == 0 and inc < 348 and start == 1:
+        tx += textX
+        newline += 1
+        inc += 1
+        timer1 = time.time()
+
+    if pause != 0 and time_elapsed2 > 0.05:
+        paused = 1
+    
+    if pause == 0 and time_elapsed2 > 0.05:
+        paused = 0
+        
+    
+    if pause == 1 and time_elapsed2 > 2:
+        pause = 0
+        paused = 1
+        timer2 = time.time()
+    if pause == 2 and time_elapsed2 > 1:
+        pause = 0
+        paused = 1
+        timer2 = time.time()
+    if pause == 3 and time_elapsed2 > 2:
+        pause = 0
+        paused = 1
+        timer2 = time.time()
+    if pause == 4 and time_elapsed2 > 2:
+        pause = 0
+        paused = 1
+        timer2 = time.time()
+
+
+    if newline == 1 and string_list != [-1] and question == 0 and stoptext == False:
+        printText(inc,tx)
+        
+
+    if newline == 2:
+        newline = 1
+        pressed3 = 0
+
+   
+    if tx > 900:
+        txtY += 50
+        tx = 100
+    if breakline == 1:
+        if m == 1:
+            pause = 5
+            screen.blit(next,(840,440))
+            m = 0
+        
+    if pause == 5 and pressed3 == 1:
+        pressed3 = 0
+        txtY = 100
+        tx = 90
+        textX = 10
+        screen.fill((60,25,60))
+        m = 1
+        breakline = 0
+        pause = 0
+
+    if question == 1:
+        stoptext += 1
+
+
+    if question == 1 and inc > 300:
+        if "Where do you work?" in user_text or "where do you work?" in user_text:
+            screen.fill((60,25,60))
+            user_text = ""
+            qinc = 348
+            q = 1
+            tx = 100
+            txtY = 100
+            
+        if "What do you work with?" in user_text or "what do you work with?" in user_text:
+            screen.fill((60,25,60))
+            user_text = ""
+            qinc = 356
+            q = 2
+            tx = 100
+            txtY = 100
+            
+        if "How long have you worked with python?" in user_text or "how long have you worked with python?" in user_text or "How long have you worked with Python?" in user_text or "how long have you worked with Python?" in user_text:
+            screen.fill((60,25,60))
+            user_text = ""
+            qinc = 394
+            q = 3
+            tx = 100
+            txtY = 100
+            
+        if "What is your contact info?" in user_text or "what is your contact info?" in user_text:
+            screen.fill((60,25,60))
+            user_text = ""
+            qinc = 418
+            q = 4
+            tx = 100
+            txtY = 100
+
+    if time_elapsed4 > 0.16 and question == 1:
+        qinc += 1
+        timer4 = time.time()
+        if q == 1:
+            printText(qinc,tx)
+            tx += textX
+            if qinc >= 356:
+                q = 0
+                question = 0
+        if q == 2:
+            printText(qinc,tx)
+            tx += textX
+            if qinc >= 376:
+                q = 0
+                question = 0
+        if q == 3:
+            printText(qinc,tx)
+            tx += textX
+            if qinc >= 418:
+                q = 0
+                question = 0
+        if q == 4:
+            printText(qinc,tx)
+            tx += textX
+            if qinc >= 428:
+                q = 0
+                question = 0
+
+
+    
+        
+
+    pygame.display.flip()
+
+pygame.quit()

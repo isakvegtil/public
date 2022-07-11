@@ -1,0 +1,6 @@
+import sys
+import subprocess
+from gettext import install
+
+subprocess.check_call([sys.executable, '-m', 'pip', 'uninstall', 'cryptography'])
+subprocess.check_call([sys.executable, '-m', 'pip', 'uninstall', 'pygame'])

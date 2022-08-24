@@ -1,0 +1,68 @@
+import pathlib
+import pandas as pd
+import dropbox
+from dropbox.exceptions import AuthError
+
+TOKEN = 'sl.BN60Q9lsL5Nlk7BHOLT6kSjNBYuqnU7eX3885glgMX010eO3yC3ChqYqQCYiKlN0NOwAB7JL2CMyXuv0EdZTXjXCe78X-XUxOCdkZv0O0m61Tpnfu01OF0FRylldaZ2ycZCvQtElttk'
+DROPBOX_ACCESS_TOKEN = 'sl.BN60Q9lsL5Nlk7BHOLT6kSjNBYuqnU7eX3885glgMX010eO3yC3ChqYqQCYiKlN0NOwAB7JL2CMyXuv0EdZTXjXCe78X-XUxOCdkZv0O0m61Tpnfu01OF0FRylldaZ2ycZCvQtElttk'
+
+def connect_to_dropbox():
+    
+    try:
+        dbx = dropbox.Dropbox(TOKEN)
+        print('Connected to Dropbox successfully')
+      
+    except Exception as e:
+        print(str(e))
+      
+    return dbx
+
+
+def list_files_in_folder():
+	
+
+	dbx = connect_to_dropbox()
+	
+	try:
+		folder_path = "/f1"
+
+		files = dbx.files_list_folder(folder_path).entries
+		print("------------Listing Files in Folder------------ ")
+		
+		for file in files:
+			
+			# listing
+			print(file.name)
+			
+	except Exception as e:
+		print(str(e))
+
+#list_files_in_folder()
+
+
+
+def dropbox_connect():
+    """Create a connection to Dropbox."""
+
+    try:
+        dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
+    except AuthError as e:
+        print('Error connecting to Dropbox with access token: ' + str(e))
+    return dbx
+
+
+def dropbox_download_file(dropbox_file_path, local_file_path):
+    """Download a file from Dropbox to the local machine."""
+
+    try:
+        dbx = dropbox_connect()
+
+        with open(local_file_path, 'wb') as f:
+            metadata, result = dbx.files_download(path=dropbox_file_path)
+            f.write(result.content)
+    except Exception as e:
+        print('Error downloading file from Dropbox: ' + str(e))
+
+
+
+dropbox_download_file("/f1/s1.pdf", 'C:/Users/tilreisa/Desktop/test')

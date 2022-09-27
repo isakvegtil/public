@@ -3,8 +3,8 @@ import pandas as pd
 import dropbox
 from dropbox.exceptions import AuthError
 
-TOKEN = 'sl.BN60Q9lsL5Nlk7BHOLT6kSjNBYuqnU7eX3885glgMX010eO3yC3ChqYqQCYiKlN0NOwAB7JL2CMyXuv0EdZTXjXCe78X-XUxOCdkZv0O0m61Tpnfu01OF0FRylldaZ2ycZCvQtElttk'
-DROPBOX_ACCESS_TOKEN = 'sl.BN60Q9lsL5Nlk7BHOLT6kSjNBYuqnU7eX3885glgMX010eO3yC3ChqYqQCYiKlN0NOwAB7JL2CMyXuv0EdZTXjXCe78X-XUxOCdkZv0O0m61Tpnfu01OF0FRylldaZ2ycZCvQtElttk'
+TOKEN = 'token'
+DROPBOX_ACCESS_TOKEN = 'token'
 
 def connect_to_dropbox():
     
